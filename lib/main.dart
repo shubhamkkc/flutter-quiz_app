@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import './question.dart';
-import './answer.dart';
+import 'package:flutter_ful_guide/data/quiz_data.dart';
+
 import 'quiz.dart';
+import 'result.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,26 +15,22 @@ class MyApp extends StatefulWidget {
 
 class MyappState extends State<MyApp> {
   var questionIndex = 0;
-  var questions = [
-    {
-      'question': 'what\' is the capital of India ',
-      'answers': ['Agra', 'Delhi', 'Jaipur', 'Pune']
-    },
-    {
-      'question': 'what\'s is the National bird',
-      'answers': ['Hen', 'Peigon', 'Peacock', 'Crow']
-    },
-    {
-      'question': 'what\'s is the World Largest River',
-      'answers': ['Nile', 'Ganga', 'Yamuna', 'Krishna']
-    },
-  ];
+  int finalResult = 0;
+  
 
-  void answerClick() {
+  void answerClick(int result) {
+    finalResult += result;
+
     setState(() {
       questionIndex = questionIndex + 1;
     });
-    print(questionIndex);
+  }
+
+  void resetQuiz() {
+    setState(() {
+      finalResult = 0;
+      questionIndex = 0;
+    });
   }
 
   @override
@@ -44,16 +41,8 @@ class MyappState extends State<MyApp> {
         title: Text('Quiz App'),
       ),
       body: questionIndex < questions.length
-          ? Column(
-              children: [
-                Question(questions[questionIndex]['question'] as String),
-                ...(questions[questionIndex]['answers'] as List<String>)
-                    .map((answer) {
-                  return Answers(answerClick, answer);
-                }).toList()
-              ],
-            )
-          : Center(child: Text('you did it')),
+          ? Quiz(questions, questionIndex, answerClick)
+          : Result(finalResult, resetQuiz),
     ));
   }
 }
